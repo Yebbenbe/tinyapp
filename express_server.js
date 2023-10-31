@@ -11,6 +11,10 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-app.listen(PORT, () => {
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
+}); // this is a route handler, it handles the path /urls.json
+
+app.listen(PORT, () => {  // without this code, node will just run the code and exit
   console.log(`Example app listening on port ${PORT}!`);
 });
