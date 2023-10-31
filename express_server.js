@@ -20,15 +20,16 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+/*  Below is example only
 app.get("/set", (req, res) => {
   const a = 1;
-  res.send(`a = ${a}`);
+  res.send(`a = ${a}`);  // this sends a response of 'a = 1'
  });
  
  app.get("/fetch", (req, res) => {
-  res.send(`a = ${a}`);
+  res.send(`a = ${a}`);  // this sends a response of 'a = undefined', this would need a cookie
  });
-
+*/
 app.listen(PORT, () => {  // without this code, node will just run the code and exit
   console.log(`Example app listening on port ${PORT}!`);
 });
