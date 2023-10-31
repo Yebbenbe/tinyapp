@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Yebbenbe/tinyapp/issues"
   },
-  "homepage": "https://github.com/Yebbenbe/tinyapp#readme"
+  "homepage": "https://github.com/Yebbenbe/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
