@@ -18,6 +18,17 @@ app.get("/urls.json", (req, res) => {
 }); // this is a route handler, it handles the path /urls.json
 // it sends a response: the urlDatabase object in JSON format
 
+// renders the page from template 'urls_index', the templateVars
+app.get("/urls", (req, res) => {
+  const templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
+});
+
+app.get("/urls/:id", (req, res) => {
+  const templateVars = { id: req.params.id, longURL: /* What goes here? */ };
+  res.render("urls_show", templateVars);
+});
+
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
