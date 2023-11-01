@@ -25,7 +25,11 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: /* What goes here? */ };
+  const id = req.params.id; 
+  // Extract id parameter from the request
+  const longURL = urlDatabase[id]; 
+  // Retrieve longURL using id from urlDatabase
+  const templateVars = { id: id, longURL: longURL };
   res.render("urls_show", templateVars);
 });
 
