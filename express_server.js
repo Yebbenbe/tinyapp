@@ -32,16 +32,30 @@ app.get("/urls/new", (req, res) => {
 
 // accepts POST requests from the form in urls_new.ejs
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  console.log(req.body.longURL); // Log the POST request longURL key to the console
-  generateRandomString();
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  const longURL = req.body.longURL;
+  // Generate a random id
+  const id = generateRandomString();
+  // Add the id-longURL pair to the urlDatabase
+  urlDatabase[id] = longURL;
+  // Redirect to /urls/:id
+  res.redirect(`/urls/${id}`);
+});
+
+// accepts GET requests to /u/:id
+app.get("/u/:id", (req, res) => {
+  const shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL];
+  if (longURL) {
+    res.status(302).redirect(longURL);
+  } else {
+    res.status(404).send("Short URL not found");
+  }
 });
 
 app.get("/urls/:id", (req, res) => {
-  const id = req.params.id; 
+  const id = req.params.id;
   // Extract id parameter from the request
-  const longURL = urlDatabase[id]; 
+  const longURL = urlDatabase[id];
   // Retrieve longURL using id from urlDatabase
   const templateVars = { id: id, longURL: longURL };
   res.render("urls_show", templateVars);
