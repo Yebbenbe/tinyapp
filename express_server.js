@@ -52,7 +52,7 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
-// route to single URL page
+// route to single URL page - urls_show.ejs
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
   // Extract id parameter from the request
@@ -67,6 +67,19 @@ app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
   if (urlDatabase[id]) {
     delete urlDatabase[id];
+    res.redirect("/urls");
+  } else {
+    res.status(404).send("Short URL not found");
+  }
+});
+
+// route to update URL, POST from urls_show.ejs form
+app.post("/urls/:id/update", (req, res) => {
+  const id = req.params.id;
+  const newLongURL = req.body.newLongURL;
+
+  if (urlDatabase[id]) {
+    urlDatabase[id] = newLongURL;
     res.redirect("/urls");
   } else {
     res.status(404).send("Short URL not found");
