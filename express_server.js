@@ -41,7 +41,7 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${id}`);
 });
 
-// accepts GET requests to /u/:id
+// /u/:id redirect route
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
   const longURL = urlDatabase[shortURL];
@@ -52,6 +52,7 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
+// route to single URL page
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
   // Extract id parameter from the request
@@ -59,6 +60,17 @@ app.get("/urls/:id", (req, res) => {
   // Retrieve longURL using id from urlDatabase
   const templateVars = { id: id, longURL: longURL };
   res.render("urls_show", templateVars);
+});
+
+// route to delete URL, POST from urls_index.ejs form
+app.post("/urls/:id/delete", (req, res) => {
+  const id = req.params.id;
+  if (urlDatabase[id]) {
+    delete urlDatabase[id];
+    res.redirect("/urls");
+  } else {
+    res.status(404).send("Short URL not found");
+  }
 });
 
 app.get("/hello", (req, res) => {
