@@ -24,6 +24,7 @@ app.get("/urls.json", (req, res) => {
 
 // renders the page from template 'urls_index', the templateVars
 app.get("/urls", (req, res) => {
+  // this uses the cookie-parser middleware to access the username cookie
   const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
   res.render("urls_index", templateVars);
 });
