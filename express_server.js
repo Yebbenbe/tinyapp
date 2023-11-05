@@ -1,9 +1,12 @@
+// express_server.js
 const express = require("express");
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -21,7 +24,7 @@ app.get("/urls.json", (req, res) => {
 
 // renders the page from template 'urls_index', the templateVars
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
   res.render("urls_index", templateVars);
 });
 
@@ -30,6 +33,14 @@ app.post('/login', (req, res) => {
   const { username } = req.body;
   // set a cookie named 'username' with the submitted value
   res.cookie('username', username);
+  res.redirect('/urls');
+});
+
+// handles logout POST request
+app.post('/logout', (req, res) => {
+  // clear the 'username' cookie
+  res.clearCookie('username');
+  // redirect back to the /urls page
   res.redirect('/urls');
 });
 
@@ -66,7 +77,7 @@ app.get("/urls/:id", (req, res) => {
   // Extract id parameter from the request
   const longURL = urlDatabase[id];
   // Retrieve longURL using id from urlDatabase
-  const templateVars = { id: id, longURL: longURL };
+  const templateVars = { id: id, longURL: longURL};
   res.render("urls_show", templateVars);
 });
 
