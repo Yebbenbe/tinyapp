@@ -25,6 +25,14 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// handles login POST request
+app.post('/login', (req, res) => {
+  const { username } = req.body;
+  // set a cookie named 'username' with the submitted value
+  res.cookie('username', username);
+  res.redirect('/urls');
+});
+
 // renders the page from template 'urls_new'
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
