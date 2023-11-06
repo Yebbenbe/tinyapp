@@ -73,15 +73,24 @@ app.get("/urls", (req, res) => {
 // renders the page from template 'login'
 app.get("/login", (req, res) => {
   const user = users[req.cookies["user_id"]];
-  const templateVars = { user: user };
-  res.render("login", templateVars);
+  // check if user is already logged in
+  if (user) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = { user: user };
+    res.render("login", templateVars);
+  }
 });
 
 // renders the page from template 'urls_new'
 app.get("/urls/new", (req, res) => {
   const user = users[req.cookies["user_id"]];
-  const templateVars = { urls: urlDatabase, user: user };
-  res.render("urls_new", templateVars);
+  if (!user) {
+    res.redirect("/login");
+  } else {
+    const templateVars = { urls: urlDatabase, user: user };
+    res.render("urls_new", templateVars);
+  }
 });
 
 // /u/:id redirect route
@@ -109,8 +118,13 @@ app.get("/urls/:id", (req, res) => {
 // renders the page from template 'register'
 app.get("/register", (req, res) => {
   const user = users[req.cookies["user_id"]];
-  const templateVars = { urls: urlDatabase, user: user };
-  res.render("register", templateVars);
+  // check if user is already logged in
+  if (user) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = { urls: urlDatabase, user: user };
+    res.render("register", templateVars);
+  }
 });
 
 app.get("/hello", (req, res) => {
@@ -151,13 +165,19 @@ app.post('/logout', (req, res) => {
 
 // accepts POST requests from the form in urls_new.ejs
 app.post("/urls", (req, res) => {
-  const longURL = req.body.longURL;
-  // Generate a random id
-  const id = generateRandomString(6);
-  // Add the id-longURL pair to the urlDatabase
-  urlDatabase[id] = longURL;
-  // Redirect to /urls/:id
-  res.redirect(`/urls/${id}`);
+  // get the user object from the global users object via the id in the cookie
+  const user = users[req.cookies["user_id"]];
+  // Check if user is not logged in
+  if (!user) {
+    res.status(403).send("You must be logged in to shorten URLs.");
+  } else {
+    const longURL = req.body.longURL;
+    const id = generateRandomString(6);
+    // add the id-longURL pair to the urlDatabase
+    urlDatabase[id] = longURL;
+    // redirect to /urls/:id
+    res.redirect(`/urls/${id}`);
+  }
 });
 
 // route to delete URL, POST from urls_index.ejs form
