@@ -26,6 +26,20 @@ const users = {
   },
 };
 
+// getUser function, takes in email from reg and users object
+function getUser(searchEmail, usersDB) {
+  // loop through each user object in users object
+  for (const userObj in usersDB) {
+    const user = users[userObj];
+    if (user.email === searchEmail) {
+      return user;
+    }
+  }
+  return false;
+}
+
+// notes on cookies
+// this will set a cookie labeled by user_id 
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -39,7 +53,10 @@ app.get("/urls.json", (req, res) => {
 // renders the page from template 'urls_index', the templateVars
 app.get("/urls", (req, res) => {
   // this uses the cookie-parser middleware to access the username cookie
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  // updated to look in the users object for the user_id cookie
+  const user = users[req.cookies["user_id"]];
+  // passes that specific user object to the template
+  const templateVars = { urls: urlDatabase, user: user };
   res.render("urls_index", templateVars);
 });
 
@@ -47,15 +64,16 @@ app.get("/urls", (req, res) => {
 
 // handles login POST request
 app.post('/login', (req, res) => {
-  const { username } = req.body;
+ const { email, password } = req.body;
   // set a cookie named 'username' with the submitted value
-  res.cookie('username', username);
+  res.cookie('user_id', user_id);
   res.redirect('/urls');
 });
 
 // renders the page from template 'urls_new'
 app.get("/urls/new", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"] }
+  const user = users[req.cookies["user_id"]];
+  const templateVars = { urls: urlDatabase, user: user };
   res.render("urls_new", templateVars);
 });
 
@@ -63,7 +81,7 @@ app.get("/urls/new", (req, res) => {
 // handles logout POST request
 app.post('/logout', (req, res) => {
   // clear the 'username' cookie
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   // redirect back to the /urls page
   res.redirect('/urls');
 });
@@ -127,22 +145,37 @@ app.post("/urls/:id/update", (req, res) => {
 
 // renders the page from template 'register'
 app.get("/register", (req, res) => {
-  const templateVars = { username: req.cookies["username"] };
+  const user = users[req.cookies["user_id"]];
+  const templateVars = { urls: urlDatabase, user: user };
   res.render("register", templateVars);
 });
 
 // registration post
 app.post("/register", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
+  const { email, password } = req.body.email;
+
+  // check if email or password are empty strings
+  if (!email || !password) {
+    res.status(400).send("Email and password cannot be empty");
+    return;
+  }
+
+  // check if email is already registered
+  const existingUser = getUser(email, users);
+  // returns null if false, returns user object if true
+  if (existingUser) {
+    res.status(400).send("Email already registered");
+    return;
+  }
+
   // generate a random user id
   const userId = generateRandomString(6);
   // create a new user object with id, email, and password
   const newUser = {
     id: userId,
-    email: email,
-    password: password,
-  };
+    email,
+    password
+    };
   // add the new user to the global users object
   users[userId] = newUser;
   console.log(newUser);

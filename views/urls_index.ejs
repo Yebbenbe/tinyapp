@@ -19,7 +19,8 @@
   </head>
   <body>
     <header>
-      <%- include('partials/_header', { username: username }) %>
+          <!-- passes the user object to _header.ejs -->
+      <%- include('partials/_header', { user: user }) %>
     </header>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
