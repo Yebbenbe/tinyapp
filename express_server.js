@@ -29,6 +29,11 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// renders the page from template 'register'
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+
 // handles login POST request
 app.post('/login', (req, res) => {
   const { username } = req.body;
@@ -36,6 +41,13 @@ app.post('/login', (req, res) => {
   res.cookie('username', username);
   res.redirect('/urls');
 });
+
+// renders the page from template 'urls_new'
+app.get("/urls/new", (req, res) => {
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"] }
+  res.render("urls_new", templateVars);
+});
+
 
 // handles logout POST request
 app.post('/logout', (req, res) => {
@@ -45,10 +57,6 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls');
 });
 
-// renders the page from template 'urls_new'
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
-});
 
 // accepts POST requests from the form in urls_new.ejs
 app.post("/urls", (req, res) => {
@@ -78,7 +86,7 @@ app.get("/urls/:id", (req, res) => {
   // Extract id parameter from the request
   const longURL = urlDatabase[id];
   // Retrieve longURL using id from urlDatabase
-  const templateVars = { id: id, longURL: longURL};
+  const templateVars = { id: id, longURL: longURL, username: req.cookies["username"]};
   res.render("urls_show", templateVars);
 });
 
