@@ -152,7 +152,7 @@ app.get("/register", (req, res) => {
 
 // registration post
 app.post("/register", (req, res) => {
-  const { email, password } = req.body.email;
+  const { email, password } = req.body;
 
   // check if email or password are empty strings
   if (!email || !password) {
