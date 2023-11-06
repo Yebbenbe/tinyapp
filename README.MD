@@ -3,7 +3,12 @@ README.MD
 ## This work is incomplete. 
 
 ## Description
-A small web application that creates and stores shortened URLs. 
+A small web application that creates and stores shortened URLs.
+
+## Setup
+- clone repo
+- npm install 
+- npm start
 
 ## Test User
     id: "userRandomID",
