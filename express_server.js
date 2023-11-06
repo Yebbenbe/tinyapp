@@ -13,6 +13,20 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
+
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -29,10 +43,7 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// renders the page from template 'register'
-app.get("/register", (req, res) => {
-  res.render("register");
-});
+
 
 // handles login POST request
 app.post('/login', (req, res) => {
@@ -62,7 +73,7 @@ app.post('/logout', (req, res) => {
 app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
   // Generate a random id
-  const id = generateRandomString();
+  const id = generateRandomString(6);
   // Add the id-longURL pair to the urlDatabase
   urlDatabase[id] = longURL;
   // Redirect to /urls/:id
@@ -114,6 +125,33 @@ app.post("/urls/:id/update", (req, res) => {
   }
 });
 
+// renders the page from template 'register'
+app.get("/register", (req, res) => {
+  const templateVars = { username: req.cookies["username"] };
+  res.render("register", templateVars);
+});
+
+// registration post
+app.post("/register", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  // generate a random user id
+  const userId = generateRandomString(6);
+  // create a new user object with id, email, and password
+  const newUser = {
+    id: userId,
+    email: email,
+    password: password,
+  };
+  // add the new user to the global users object
+  users[userId] = newUser;
+  console.log(newUser);
+  // set a user_id cookie containing the user's ID
+  res.cookie("user_id", userId);
+  // redirect the user to the /urls page
+  res.redirect("/urls");
+});
+
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
@@ -132,7 +170,7 @@ app.listen(PORT, () => {  // without this code, node will just run the code and 
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-function generateRandomString(length = 6) {
+function generateRandomString(length) {
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let randomString = '';
   for (let i = 0; i < length; i++) {
