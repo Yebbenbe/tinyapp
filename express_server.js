@@ -60,7 +60,10 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-
+// renders the page from template 'login'
+app.get("/login", (req, res) => {
+  res.render("login");
+});
 
 // handles login POST request
 app.post('/login', (req, res) => {

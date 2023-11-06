@@ -28,14 +28,8 @@
           <button type="submit" class="btn btn-danger">Logout</button>
         </form>
       <% } else { %>
-        <form action="/login" method="POST">
-          <div class="form-group">
-              <label for="username">Username:</label>
-              <input type="text" class="form-control" id="username" name="username"
-                  placeholder="Enter your username" required>
-          </div>
-          <button type="submit" class="btn btn-primary">Login</button>
-        </form>
+        <a class="nav-item nav-link" href="/register">Register</a>
+        <a class="nav-item nav-link" href="/login">Login</a>
       <% } %>
     </div>
   </nav>

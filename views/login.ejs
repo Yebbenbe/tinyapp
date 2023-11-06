@@ -1,4 +1,4 @@
-<!-- urls_new-ejs -->
+<!-- login.ejs -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,25 +16,25 @@
       crossorigin="anonymous"
     />
 
-    <title>TinyApp New URL</title>
+    <title>TinyApp Login</title>
   </head>
 
   <body>
-        <!-- passes the user object to _header.ejs -->
-    <%- include('partials/_header', { user: user }) %>
     <main style="margin: 1em;">
-      <h3>Create TinyURL</h3>
-      <form action="/urls" method="POST">
-          <label for="longURL">Enter a URL:</label>
-          <input
-            type="text"
-            name="longURL"
-            placeholder="http://"
-            />
-            <button type="submit" class="btn btn-primary">Submit</button>
-          <!--  <input type="submit" value="Sign In"> -->
+      <h3> Login </h3>
+      <form action="/login" method="POST">
+        <div>
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email">
+        </div>
+        <div>
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password">
+        </div>
+        <button type="submit">Login</button>
       </form>
     </main>
+
     <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
