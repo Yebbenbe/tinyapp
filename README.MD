@@ -2,7 +2,7 @@ README.MD
 
 # Tinyapp
 
-A small clone of tinyURL.
+A small clone of tinyURL. Register an acount, create and save shortened urls. 
 
 ## Purpose
 
@@ -14,21 +14,28 @@ This project was created and published by me as part of my learnings at Lighthou
 - clone repo
 - `npm install` 
 - `npm start`
-- localhost:8080 in browser
 
 ## Documentation
 
-For functional testing, a test user and url database is available: 
+Pages can be viewed at http://localhost:8080
 
-**email:** user@booble.com
+For functional testing, a test user is available: 
 
+**email:** user@booble.com \
 **password:** password
 
-### The following paths are available in your browser at locaohost:8080
-/
-/urls
-/urls/new
-/urls/:id (shortened url id)
-/u/:id    (shortened url id)
-/login
+You may also create your own. The following are available in the browser:\
+/\
+/urls\
+/urls/new\
+/urls/:id\
+/u/:id\
+/login\
 /register
+
+### Dependencies
+- Node.js
+- Express
+- EJS
+- bcryptjs
+- cookie-session
