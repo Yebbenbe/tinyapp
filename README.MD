@@ -39,3 +39,9 @@ You may also create your own. The following are available in the browser:\
 - EJS
 - bcryptjs
 - cookie-session
+
+## Final Product
+
+!["Login page"](https://github.com/Yebbenbe/tinyapp/blob/master/docs/login_page.png?raw=true)
+!["New URL page"](https://github.com/Yebbenbe/tinyapp/blob/master/docs/new_url_page.png?raw=true)
+!["Saved URLs page"](https://github.com/Yebbenbe/tinyapp/blob/master/docs/urls_page.png?raw=true)
