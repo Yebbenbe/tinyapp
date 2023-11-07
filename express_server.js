@@ -2,6 +2,7 @@
 const express = require("express");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
+const { getUser, generateRandomString, urlsForUser } = require('./helpers');
 const app = express();
 const PORT = 8080;
 
@@ -16,16 +17,11 @@ app.use(cookieSession({
 
 // global variables
 const urlDatabase = {
-  b6UTxQ: {
+  11111: {
     longURL: "https://www.lighthouselabs.ca/",
     userID: "abcdee",
-  },
-  i3BoGr: {
-    longURL: "https://www.google.ca",
-    userID: "abcdee",
-  },
+  }
 };
-
 
 const users = {
   abcdee: {
@@ -35,38 +31,6 @@ const users = {
     password: bcrypt.hashSync("password", 10),
   }
 };
-
-// page functions
-function generateRandomString(length) {
-  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let randomString = '';
-  for (let i = 0; i < length; i++) {
-    randomString += charset[Math.floor(Math.random() * charset.length)];
-  }
-  return randomString;
-}
-
-function getUser(searchEmail, usersDB) {
-  // loop through each user object in users object
-  for (const userId in usersDB) {
-    const user = usersDB[userId];
-    if (user.email === searchEmail) {
-      return user;
-    }
-  }
-  return false;
-}
-
-// loops through urldb creating an object of urls that belong to a specific user
-function urlsForUser(userID) {
-  const userURLs = {};
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === userID) {
-      userURLs[shortURL] = urlDatabase[shortURL].longURL;
-    }
-  }
-  return userURLs;
-}
 
 // GET routes
 
@@ -90,7 +54,7 @@ app.get("/urls", (req, res) => {
     return;
   }
   // must go after if check otherwise error
-  const userURLs = urlsForUser(user.id);
+  const userURLs = urlsForUser(user.id, urlDatabase);
   // passes that specific user object and userURLs to the template
   const templateVars = { urls: userURLs, user: user };
   res.render("urls_index", templateVars);
