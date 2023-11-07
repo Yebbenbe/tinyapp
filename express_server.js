@@ -1,13 +1,18 @@
 // express_server.js
 const express = require("express");
-const cookieParser = require('cookie-parser');
-const bcrypt = require('bcrypt');
+const cookieSession = require('cookie-session');
+const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080;
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['b!gC0zyK33?'],
+  maxAge: 24 * 60 * 60 * 1000
+}));
+
 
 // global variables
 const urlDatabase = {
@@ -26,7 +31,8 @@ const users = {
   abcdee: {
     id: "abcdee",
     email: "user@booble.com",
-    password: "password",
+    // updated to use hashed password
+    password: bcrypt.hashSync("password", 10),
   }
 };
 
@@ -42,8 +48,8 @@ function generateRandomString(length) {
 
 function getUser(searchEmail, usersDB) {
   // loop through each user object in users object
-  for (const userObj in usersDB) {
-    const user = users[userObj];
+  for (const userId in usersDB) {
+    const user = usersDB[userId];
     if (user.email === searchEmail) {
       return user;
     }
@@ -78,12 +84,13 @@ app.get("/urls.json", (req, res) => {
 // urls page
 app.get("/urls", (req, res) => {
   // updated to look in the users object for the user_id cookie
-  const user = users[req.cookies["user_id"]];
-  const userURLs = urlsForUser(user.id);
+  const user = users[req.session.user_id];
   if (!user) {
     res.send("Please log in or register to view your URLs.");
     return;
   }
+  // must go after if check otherwise error
+  const userURLs = urlsForUser(user.id);
   // passes that specific user object and userURLs to the template
   const templateVars = { urls: userURLs, user: user };
   res.render("urls_index", templateVars);
@@ -91,7 +98,7 @@ app.get("/urls", (req, res) => {
 
 // renders the page from template 'login'
 app.get("/login", (req, res) => {
-  const user = users[req.cookies["user_id"]];
+  const user = users[req.session.user_id];
   // check if user is already logged in
   if (user) {
     res.redirect("/urls");
@@ -103,7 +110,7 @@ app.get("/login", (req, res) => {
 
 // renders the page from template 'urls_new'
 app.get("/urls/new", (req, res) => {
-  const user = users[req.cookies["user_id"]];
+  const user = users[req.session.user_id];
   if (!user) {
     res.redirect("/login");
   } else {
@@ -126,7 +133,7 @@ app.get("/u/:id", (req, res) => {
 // route to single URL page - urls_show.ejs
 app.get("/urls/:id", (req, res) => {
   const shortURL = req.params.id;
-  const user = users[req.cookies["user_id"]];
+  const user = users[req.session.user_id];
   const urlEntry = urlDatabase[shortURL];
   if (!user) {
     res.status(401).send("Please log in or register to view this URL.");
@@ -136,13 +143,13 @@ app.get("/urls/:id", (req, res) => {
     res.status(403).send("You do not have permission to view this URL.");
     return;
   }
-  const templateVars = { id: shortURL, longURL: urlEntry.longURL, user: req.cookies["user_id"] };
+  const templateVars = { id: shortURL, longURL: urlEntry.longURL, user: req.session.user_id};
   res.render("urls_show", templateVars);
 });
 
 // renders the page from template 'register'
 app.get("/register", (req, res) => {
-  const user = users[req.cookies["user_id"]];
+  const user = users[req.session.user_id];
   // check if user is already logged in
   if (user) {
     res.redirect("/urls");
@@ -176,22 +183,22 @@ app.post('/login', (req, res) => {
     return;
   }
   // set a cookie named 'user_id' to the user's ID
-  res.cookie('user_id', user.id);
+  req.session.user_id = user.id;
   res.redirect('/urls');
 });
 
 // handles logout POST request
 app.post('/logout', (req, res) => {
   // clear the 'user_id' cookie
-  res.clearCookie('user_id');
+  req.session = null;
   // redirect back to the /urls page
   res.redirect('/login');
 });
 
 // accepts POST requests from the form in urls_new.ejs
 app.post("/urls", (req, res) => {
-  // get the user object from the global users object via the id in the cookie
-  const user = users[req.cookies["user_id"]];
+  // get the user object from the global users object via the id in the cookie. Updated to cookie-session
+  const user = users[req.session.user_id];
   const id = generateRandomString(6);
   // Check if user is not logged in
   if (!user) {
@@ -211,7 +218,7 @@ app.post("/urls", (req, res) => {
 // route to delete URL, POST from urls_index.ejs form
 app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
-  const user = users[req.cookies["user_id"]];
+  const user = users[req.session.user_id];
   const urlEntry = urlDatabase[shortURL];
   if (urlEntry) {
     if (!user || urlEntry.userID !== user.id) {
@@ -231,7 +238,7 @@ app.post("/urls/:id/update", (req, res) => {
   const shortURL = req.params.id;
   const urlEntry = urlDatabase[shortURL];
   const newLongURL = req.body.newLongURL;
-  const user = users[req.cookies["user_id"]];
+  const user = users[req.session.user_id];
 
   if (urlEntry) {
     if (!user || urlEntry.userID !== user.id) {
@@ -271,8 +278,8 @@ app.post("/register", (req, res) => {
   };
   // Add the new user to the global users object
   users[userId] = newUser;
-  // Set a user_id cookie containing the user's ID
-  res.cookie("user_id", userId);
+  // Set a user_id cookie containing the user's ID, updated to cookie-session
+  req.session.user_id = userId;
   // Redirect the user to the /urls page
   res.redirect("/urls");
 });
