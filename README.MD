@@ -21,6 +21,7 @@ This project was created and published by me as part of my learnings at Lighthou
 For functional testing, a test user and url database is available: 
 
 **email:** user@booble.com
+
 **password:** password
 
 ### The following paths are available in your browser at locaohost:8080

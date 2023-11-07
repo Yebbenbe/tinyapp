@@ -49,8 +49,7 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const user = users[req.session.user_id];
   if (!user) {
-    res.send("Please log in or register to view your URLs.");
-    return;
+    return res.send("Please log in or register to view your URLs.");
   }
   const userURLs = urlsForUser(user.id, urlDatabase);
   const templateVars = { urls: userURLs, user: user };
@@ -95,18 +94,17 @@ app.get("/urls/:id", (req, res) => {
   const shortURL = req.params.id;
   const user = users[req.session.user_id];
   const urlEntry = urlDatabase[shortURL];
+
   if (!urlEntry) {
-    res.status(404).send("Short URL not found");
-    return;
+    return res.status(404).send("Short URL not found");
   }
   if (!user) {
-    res.status(401).send("Please log in or register to view this URL.");
-    return;
+    return res.status(401).send("Please log in or register to view this URL.");
   }
   if (urlEntry.userID !== user.id) {
-    res.status(403).send("You do not have permission to view this URL.");
-    return;
+    return res.status(403).send("You do not have permission to view this URL.");
   }
+
   const templateVars = { id: shortURL, longURL: urlEntry.longURL, user: req.session.user_id };
   res.render("urls_show", templateVars);
 });
@@ -146,8 +144,7 @@ app.post("/urls/:id/delete", (req, res) => {
   const urlEntry = urlDatabase[shortURL];
   if (urlEntry) {
     if (!user || urlEntry.userID !== user.id) {
-      res.status(403).send("You do not have permission to delete this URL.");
-      return;
+      return res.status(403).send("You do not have permission to delete this URL.");
     } else {
       delete urlDatabase[shortURL];
       res.redirect("/urls");
@@ -165,8 +162,7 @@ app.post("/urls/:id/update", (req, res) => {
   const user = users[req.session.user_id];
   if (urlEntry) {
     if (!user || urlEntry.userID !== user.id) {
-      res.status(403).send("You do not have permission to edit this URL.");
-      return;
+      return res.status(403).send("You do not have permission to edit this URL.");
     } else {
       urlEntry.longURL = newLongURL;
       res.redirect("/urls");
@@ -181,12 +177,10 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const user = getUser(email, users);
   if (!user) {
-    res.status(400).send("Email not found");
-    return;
+    return res.status(400).send("Email not found");
   }
   if (!bcrypt.compareSync(password, user.password)) {
-    res.status(403).send("Password does not match");
-    return;
+    return res.status(403).send("Password does not match");
   }
   req.session.user_id = user.id;
   res.redirect('/urls');
@@ -197,13 +191,11 @@ app.post("/register", (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    res.status(400).send("Email and password cannot be empty");
-    return;
+    return res.status(400).send("Email and password cannot be empty");
   }
   const existingUser = getUser(email, users);
   if (existingUser) {
-    res.status(400).send("Email already registered");
-    return;
+    return res.status(400).send("Email already registered");
   }
 
   const userId = generateRandomString(6);
