@@ -17,7 +17,7 @@ app.use(cookieSession({
 
 // global variables
 const urlDatabase = {
-  11111: {
+  111111: {
     longURL: "https://www.lighthouselabs.ca/",
     userID: "abcdee",
   }
@@ -32,12 +32,16 @@ const users = {
   }
 };
 
-// GET routes
-
 // root page redirects to /urls
 app.get("/", (req, res) => {
-  res.send("Hello!");
-  res.redirect("/urls");
+  const user = users[req.session.user_id];
+  if (user) {
+    // Redirect to /urls if user is logged in
+    res.redirect("/urls");
+  } else {
+    // Redirect to /login if user is not logged in
+    res.redirect("/login");
+  }
 });
 
 // JSON string of the entire urlDatabase object

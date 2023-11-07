@@ -7,8 +7,7 @@ function getUser(searchEmail, usersDB) {
     if (user.email === searchEmail) {
       return user;
     }
-  }
-  return false;
+  };
 }
 
 // generates a random string of a given length
