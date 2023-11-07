@@ -1,8 +1,8 @@
 {
   "name": "tinyapp",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A small clone of tinyURL. Register an acount, create and save shortened urls.",
+  "main": "express_server.js",
   "scripts": {
     "start": "./node_modules/.bin/nodemon -L express_server.js",
     "test": "mocha"
@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/Yebbenbe/tinyapp.git"
   },
-  "author": "",
+  "author": "Yebbenbe",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Yebbenbe/tinyapp/issues"

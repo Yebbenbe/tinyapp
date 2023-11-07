@@ -13,7 +13,7 @@ This project was created and published by me as part of my learnings at Lighthou
 ## Setup
 - clone repo
 - `npm install` 
-- `npm start`
+- `node express_server.js`
 
 ## Documentation
 
