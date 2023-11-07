@@ -32,4 +32,4 @@ function urlsForUser(userID, urlDB) {
 }
 
 
-module.exports = {getUser, generateRandomString, urlsForUser};
+module.exports = { getUser, generateRandomString, urlsForUser };
