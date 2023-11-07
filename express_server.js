@@ -1,6 +1,7 @@
 // express_server.js
 const express = require("express");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 const app = express();
 const PORT = 8080;
 
@@ -159,22 +160,22 @@ app.get("/hello", (req, res) => {
 
 // POST routes
 
-// handles login POST request
+// dandles login POST request with bcrypt
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   // look up the user by email
   const user = getUser(email, users);
-  // if user not found
+  // iyuf user not found
   if (!user) {
     res.status(400).send("Email not found");
     return;
   }
-  // if user found, check if password matches
-  if (user.password !== password) {
+  // compare the provided password with the hashed password in the database
+  if (!bcrypt.compareSync(password, user.password)) {
     res.status(403).send("Password does not match");
     return;
   }
-  // else, set a cookie named 'user_id' to id property of user object - the six digit key
+  // set a cookie named 'user_id' to the user's ID
   res.cookie('user_id', user.id);
   res.redirect('/urls');
 });
@@ -245,34 +246,34 @@ app.post("/urls/:id/update", (req, res) => {
   }
 });
 
-// registration post
+// Registration post with bcrypt
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
-  // check if email or password are empty strings
   if (!email || !password) {
     res.status(400).send("Email and password cannot be empty");
     return;
   }
-  // check if email is already registered
+  // Check if email is already registered
   const existingUser = getUser(email, users);
-  // returns null if false, returns user object if true
   if (existingUser) {
     res.status(400).send("Email already registered");
     return;
   }
-  // generate a random user id
+  // Generate a random user id
   const userId = generateRandomString(6);
-  // create a new user object with id, email, and password
+  // Hash the password using bcrypt
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  // Create a new user object with id, email, and hashed password
   const newUser = {
     id: userId,
     email,
-    password
+    password: hashedPassword
   };
-  // add the new user to the global users object
+  // Add the new user to the global users object
   users[userId] = newUser;
-  // set a user_id cookie containing the user's ID
+  // Set a user_id cookie containing the user's ID
   res.cookie("user_id", userId);
-  // redirect the user to the /urls page
+  // Redirect the user to the /urls page
   res.redirect("/urls");
 });
 
