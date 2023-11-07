@@ -11,10 +11,12 @@ A small web application that creates and stores shortened URLs.
 - npm start
 
 ## Test User
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur",
-
+  abcdee: {
+    id: "abcdee",
+    email: "user@booble.com",
+    password: "password",
+  }
+  
 ## Paths
 /
 /urls
