@@ -2,6 +2,7 @@
 const express = require("express");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
+// helper functions
 const { getUser, generateRandomString, urlsForUser } = require('./helpers');
 
 const app = express();
@@ -29,7 +30,7 @@ const urlDatabase = {
 const users = {
   abcdee: {
     id: "abcdee",
-    email: "user@booble.com",
+    email: "user@example.com",
     password: bcrypt.hashSync("password", 10),
   }
 };
